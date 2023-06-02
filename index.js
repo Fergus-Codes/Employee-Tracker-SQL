@@ -23,7 +23,7 @@ inquirer
     {
       type: 'list',
       message: 'Please select from the following options below;',
-      choices: ["View all departments", "View all roles", "View all employees", "Add a department", "Add a role", "Add an employee", "Update an employee role"],
+      choices: ["View all departments", "View all roles", "View all employees", "Add a department", "Add a role", "Add an employee", "Update an employee role", "Update employee managers", "View employees by manager", "View employees by department", "Delete departments, roles and employees", "View total utalized budget per department"],
       name:"userchoice"
     }
 ])
@@ -58,10 +58,32 @@ inquirer
 
         updateEmployeeRole()
 
+    } else if (answers.userchoice == "Update employee managers") {
+
+        updateEmployeeManagers ()
+
+    } else if (answers.userchoice == "View employees by manager") {
+
+        viewEmployeesByManager ()
+
+    } else if (answers.userchoice == "View employees by department") {
+
+        viewEmployeesByDepartment ()
+
+    } else if (answers.userchoice == "Delete departments, roles and employees") {
+        
+        deleteData ()
+
+    } else if (answers.userchoice == "View total utalized budget per department") {
+
+        totalUtalizedBudget ()
+
     }
+
+
 })};
 
-function viewAllDepartments () {
+function viewAllDepartments () { // COMPLETE
  //select * from departments
  db.query('SELECT * FROM department \G', function (err, results) {
     console.log('|--------------------Result----------------------|')
@@ -71,7 +93,7 @@ function viewAllDepartments () {
 });
 };
 
-function viewAllRoles () {
+function viewAllRoles () { // COMPLETE
 
     db.query('SELECT * FROM role \G', function (err, results) {
         console.log('|--------------------Result----------------------|')
@@ -83,7 +105,7 @@ function viewAllRoles () {
  // select * from roles
 };
 
-function viewAllEmployees () {
+function viewAllEmployees () { // COMPLETE
 // select * from employees
 db.query('SELECT * FROM employee \G', function (err, results) {
     console.log('|--------------------Result----------------------|')
@@ -94,7 +116,7 @@ db.query('SELECT * FROM employee \G', function (err, results) {
 });
 };
 
-function addADepartment () {
+function addADepartment () { // COMPLETE
     inquirer
       .prompt([
         {
@@ -131,7 +153,7 @@ function addADepartment () {
       });
 };
 
-function addARole () {
+function addARole () { // COMPLETE
 
     inquirer
     .prompt([
@@ -189,7 +211,7 @@ function addARole () {
   })
 };
 
-function addAnEmployee () {
+function addAnEmployee () { // COMPLETE
 
     inquirer
     .prompt([
@@ -260,7 +282,7 @@ initUserPrompts()
   })
 };
 
-function updateEmployeeRole() {
+function updateEmployeeRole() { // COMPLETE
     inquirer
       .prompt([
         {
@@ -310,5 +332,145 @@ function updateEmployeeRole() {
         }
       });
 };
+
+function updateEmployeeManagers () { // COMPLETE
+    inquirer
+    .prompt([
+      {
+        type: 'input',
+        message: 'Please enter the employee ID of the employee you would like to update.',
+        name: 'changeManagerEmployeeID'
+      },
+      {
+        type: 'input',
+        message: 'Please enter the new manager you would like to update the employees record with',
+        name: 'newManager'
+      },
+    ])
+    .then((answers) => {
+      if (answers.changeManagerEmployeeID.length === 0) {
+            console.log('|--------------------Result----------------------|')
+            console.log('Please ensure you enter a valid employee ID');
+            console.log('|------------------------------------------------|')
+
+      } else {
+        let updateSelectedEmployee = answers.changeManagerEmployeeID;
+        let updateContent = answers.newManager;
+
+        let sql = 'UPDATE employee SET manager_id = ? WHERE id = ?';
+        let values = [updateContent, updateSelectedEmployee];
+
+        db.query(sql, values, function (err, results) {
+          if (err) {
+                console.log('|--------------------Result----------------------|')
+                console.error('An error occurred while updating the employee:', err);
+                console.log('|------------------------------------------------|')
+            return;
+          }
+          console.log('|--------------------Result----------------------|')
+          console.log(results);
+          console.log(`The manager for employee ${updateSelectedEmployee} has been updated in the database`);
+          console.log('|------------------------------------------------|')
+          initUserPrompts();
+        });
+      }
+    });
+
+
+}
+
+function viewEmployeesByManager () { // COMPLETE
+    inquirer
+    .prompt([
+      {
+        type: 'input',
+        message: 'Please enter a manager ID to view all employees',
+        name: 'viewEmpByManagerID'
+      },
+    ])
+    .then((answers) => {
+      if (answers.viewEmpByManagerID.length === 0) {
+
+            console.log('|--------------------Result----------------------|')
+            console.log('Please ensure you enter a valid employee ID');
+            console.log('|------------------------------------------------|')
+
+      } else {
+
+        let sql = 'SELECT * FROM EMPLOYEE WHERE manager_id = ?';
+        let values = [answers.viewEmpByManagerID];
+
+        db.query(sql, values, function (err, results) {
+          if (err) {
+                console.log('|--------------------Result----------------------|')
+                console.error('An error occurred while updating the employee:', err);
+                console.log('|------------------------------------------------|')
+            return;
+          }
+            console.log('|--------------------Result----------------------|')
+            console.log(results)
+            console.log('|------------------------------------------------|')
+
+          initUserPrompts();
+        });
+      }
+    });
+
+
+}
+
+function viewEmployeesByDepartment () { // COMPLETE
+    inquirer
+    .prompt([
+      {
+        type: 'input',
+        message: 'Please enter a department ID to view all employees',
+        name: 'viewEmpByDepartmentID'
+      },
+    ])
+    .then((answers) => {
+      if (answers.viewEmpByDepartmentID.length === 0) {
+
+            console.log('|--------------------Result----------------------|')
+            console.log('Please ensure you enter a valid employee ID');
+            console.log('|------------------------------------------------|')
+
+      } else {
+        
+        let sql = 
+        `SELECT employee.id, employee.first_name, employee.last_name, department.name AS department
+        FROM employee
+        JOIN department ON employee.department_id = department.id
+        WHERE department.id = ?`;
+        
+        let departmentID = answers.viewEmpByDepartmentID
+        db.query(sql, departmentID, function (err, results) {
+          if (err) {
+                console.log('|--------------------Result----------------------|')
+                console.error('An error occurred while updating the employee:', err);
+                console.log('|------------------------------------------------|')
+            return;
+          }
+            console.log('|--------------------Result----------------------|')
+            console.log(results)
+            console.log('|------------------------------------------------|')
+
+          initUserPrompts();
+        });
+      }
+    });
+}
+
+function deleteData () { // INCOMPLETE
+
+
+}
+
+function totalUtalizedBudget () { // INCOMPLETE
+
+}
+
+
+
 
 initUserPrompts();
