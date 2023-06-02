@@ -47,6 +47,7 @@ It is all done through the terminal, so no browser is required to run this app.
 
 # Screenshot of the application
 
+![image](https://github.com/Fergus-Codes/Employee-Tracker-SQL/assets/124581010/2e26b032-89c0-48d1-9932-76e358ad7b3d)
 
 
 
