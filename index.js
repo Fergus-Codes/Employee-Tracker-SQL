@@ -11,10 +11,10 @@ const db = mysql.createConnection(
     // MySQL username,
     user: 'root',
     // MySQL password
-    password: '',
-    database: 'emplyoee_db'
+    password: 'Dinofreads8!',
+    database: 'employee_db'
   },
-  console.log(`Connected to the classlist_db database.`)
+  console.log(`Connected to the emplyoee_db database.`)
 );
 
 // Prompt questions
@@ -59,59 +59,63 @@ inquirer
 
         updateEmployeeRole()
 
-    } else {
-        
-        return;
     }
 })};
 
 function viewAllDepartments () {
  //select * from departments
- db.query('SELECT * FROM DEPARTMENTS', function (err, results) {
+ db.query('SELECT * FROM department \G', function (err, results) {
     console.log(results)
+    initUserPrompts()
 });
 };
 
 function viewAllRoles () {
 
-    db.query('SELECT * FROM ROLES', function (err, results) {
+    db.query('SELECT * FROM role \G', function (err, results) {
         console.log(results)
+        initUserPrompts()
     });
  // select * from roles
 };
 
 function viewAllEmployees () {
 // select * from employees
-db.query('SELECT * FROM employees', function (err, results) {
+db.query('SELECT * FROM employee \G', function (err, results) {
     console.log(results)
+    initUserPrompts()
 });
 };
 
 function addADepartment () {
-
     inquirer
-    .prompt([
-
-      {
-        type: "input",
-        message: 'Please enter the name of the department you would like to add',
-        name: "departmentname"
-      },
-
-    ])
-
-.then((answers) => {
-      if (answers.departmentname.length === 0 ) {
-
-console.log("Please enter a valid department name")
- 
-      } else {
-// add the department name to department table 
-
-console.log(`The ${answers.departmentname} department has been added to the database`)
-      }
-      
-})};
+      .prompt([
+        {
+          type: "input",
+          message: 'Please enter the name of the department you would like to add',
+          name: "departmentname"
+        },
+      ])
+      .then((answers) => {
+        if (answers.departmentname.length === 0 ) {
+          console.log("Please enter a valid department name");
+          initUserPrompts();
+        } else {
+          let newDepartment = answers.departmentname;
+          // using placeholder '?' to avoid SQL injection attacks
+          db.query('INSERT INTO department (name) VALUES (?);', [newDepartment], function (err, results) {
+            if (err) {
+              // error handling
+              console.error("An error occurred while adding the department: ", err);
+              return;
+            }
+            console.log(results);
+            console.log(`The ${answers.departmentname} department has been added to the database`);
+            initUserPrompts();
+          });
+        }
+      });
+  };
 
 
 function addARole () {
@@ -154,7 +158,7 @@ function addARole () {
 
 // add all user input to create a new role
 console.log(`The ${answers.roletitle} role has been added to the database`)
-
+initUserPrompts()
     }}}
   })
 };
@@ -204,6 +208,7 @@ function addAnEmployee () {
     } else {
 // add all user input to create a new role
 console.log(`The ${answers.roletitle} role has been added to the database`)
+initUserPrompts()
     }}}
   })
 };
@@ -219,6 +224,8 @@ function updateEmployeeRole () {
         name:"userchoice"
       }
   ])
+
+console.log(`The `)
 };
 
 initUserPrompts();
