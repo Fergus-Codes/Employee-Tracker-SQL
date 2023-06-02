@@ -3,7 +3,7 @@ const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
 
-// Connect to SQL database
+// Connect to SQL database -- DONT FORGET TO ADD PASSWORD 
 const db = mysql.createConnection(
   {
     host: 'localhost',
@@ -79,10 +79,9 @@ inquirer
         totalUtalizedBudget ()
 
     }
-
-
 })};
 
+// View all Departments function
 function viewAllDepartments () { // COMPLETE
  //select * from departments
  db.query('SELECT * FROM department \G', function (err, results) {
@@ -93,6 +92,7 @@ function viewAllDepartments () { // COMPLETE
 });
 };
 
+// View all Roles function
 function viewAllRoles () { // COMPLETE
 
     db.query('SELECT * FROM role \G', function (err, results) {
@@ -105,6 +105,7 @@ function viewAllRoles () { // COMPLETE
  // select * from roles
 };
 
+// View all employees function
 function viewAllEmployees () { // COMPLETE
 // select * from employees
 db.query('SELECT * FROM employee \G', function (err, results) {
@@ -116,6 +117,7 @@ db.query('SELECT * FROM employee \G', function (err, results) {
 });
 };
 
+// Add a department function
 function addADepartment () { // COMPLETE
     inquirer
       .prompt([
@@ -153,6 +155,7 @@ function addADepartment () { // COMPLETE
       });
 };
 
+// Add a role function
 function addARole () { // COMPLETE
 
     inquirer
@@ -211,6 +214,7 @@ function addARole () { // COMPLETE
   })
 };
 
+// Add an employee function
 function addAnEmployee () { // COMPLETE
 
     inquirer
@@ -282,6 +286,7 @@ initUserPrompts()
   })
 };
 
+// update an employees role function
 function updateEmployeeRole() { // COMPLETE
     inquirer
       .prompt([
@@ -333,6 +338,7 @@ function updateEmployeeRole() { // COMPLETE
       });
 };
 
+// update manager of an employee function
 function updateEmployeeManagers () { // COMPLETE
     inquirer
     .prompt([
@@ -379,6 +385,7 @@ function updateEmployeeManagers () { // COMPLETE
 
 }
 
+// view all employees by manager
 function viewEmployeesByManager () { // COMPLETE
     inquirer
     .prompt([
@@ -419,6 +426,7 @@ function viewEmployeesByManager () { // COMPLETE
 
 }
 
+// view all employees by department
 function viewEmployeesByDepartment () { // COMPLETE
     inquirer
     .prompt([
@@ -461,16 +469,17 @@ function viewEmployeesByDepartment () { // COMPLETE
     });
 }
 
+
+// Delete selected data from selected tables function
 function deleteData () { // INCOMPLETE
 
 
 }
 
+// Sum of utalized budget per department function
 function totalUtalizedBudget () { // INCOMPLETE
 
 }
 
-
-
-
+// Init the application when node index.js is prompted.
 initUserPrompts();

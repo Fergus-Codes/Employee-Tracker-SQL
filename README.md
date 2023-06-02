@@ -40,9 +40,10 @@ THEN I am prompted to select an employee to update and their new role and this i
 
 
 # Description
+
 This simple employee tracker app was designed to allow employers to view, add and edit data on their database.
 It is all done through the terminal, so no browser is required to run this app.
-
+A sample database has been created specifically for this application which can be found in the db folder.
 
 
 # Screenshot of the application
@@ -51,10 +52,8 @@ It is all done through the terminal, so no browser is required to run this app.
 
 ![image](https://github.com/Fergus-Codes/Employee-Tracker-SQL/assets/124581010/c9c1195e-cf17-49c1-b16d-64d3b1aa546b)
 
+# Live screen recording of the application
 
-# Link to deployed application on Heroku.
-
-https://mighty-refuge-19223.herokuapp.com/
 
 # Questions
 
