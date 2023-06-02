@@ -12,12 +12,13 @@ const db = mysql.createConnection(
     user: 'root',
     // MySQL password
     password: '',
-    database: 'classlist_db'
+    database: 'emplyoee_db'
   },
   console.log(`Connected to the classlist_db database.`)
 );
 
 // Prompt questions
+function initUserPrompts () {
 inquirer
   .prompt([
     {
@@ -28,39 +29,63 @@ inquirer
     }
 ])
 
+    .then((answers) => {
+
     if (answers.userchoice == "View all departments") {
+
         viewAllDepartments()
-    }
-    if (answers.userchoice == "View all roles") {
+
+    } else if (answers.userchoice == "View all roles") {
+
         viewAllRoles()
-    }
-    if (answers.userchoice == "View all employees") {
+
+    } else if (answers.userchoice == "View all employees") {
+
         viewAllEmployees()
-    }
-    if (answers.userchoice == "Add a department") {
+
+    } else if (answers.userchoice == "Add a department") {
+
         addADepartment()
-    }
-    if (answers.userchoice == "Add a role") {
+
+    } else if (answers.userchoice == "Add a role") {
+
         addARole()
-    }
-    if (answers.userchoice == "Add an employee") {
+
+    } else if (answers.userchoice == "Add an employee") {
+
         addAnEmployee()
-    }
-    if (answers.userchoice == "Update an employee role") {
+
+    } else if (answers.userchoice == "Update an employee role") {
+
         updateEmployeeRole()
+
+    } else {
+        
+        return;
     }
+})};
 
 function viewAllDepartments () {
  //select * from departments
-}
+ db.query('SELECT * FROM DEPARTMENTS', function (err, results) {
+    console.log(results)
+});
+};
 
 function viewAllRoles () {
+
+    db.query('SELECT * FROM ROLES', function (err, results) {
+        console.log(results)
+    });
  // select * from roles
-}
+};
 
 function viewAllEmployees () {
 // select * from employees
-}
+db.query('SELECT * FROM employees', function (err, results) {
+    console.log(results)
+});
+};
 
 function addADepartment () {
 
@@ -132,7 +157,7 @@ console.log(`The ${answers.roletitle} role has been added to the database`)
 
     }}}
   })
-}
+};
 
 function addAnEmployee () {
 
@@ -181,7 +206,7 @@ function addAnEmployee () {
 console.log(`The ${answers.roletitle} role has been added to the database`)
     }}}
   })
-}
+};
 
 function updateEmployeeRole () {
 
@@ -194,5 +219,6 @@ function updateEmployeeRole () {
         name:"userchoice"
       }
   ])
-}
+};
 
+initUserPrompts();
