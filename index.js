@@ -239,6 +239,11 @@ function addAnEmployee () { // COMPLETE
         message: 'Please enter the employees manager ID (must be a number)',
         name: "employeemanagerid"
       },
+      {
+        type: "input",
+        message: 'Please enter the employees department ID (must be a number)',
+        name: "employedepartmentid"
+      },
   ])
 
   .then((answers) => {
@@ -265,7 +270,7 @@ function addAnEmployee () { // COMPLETE
     } else {
 // add all user input to create a new role
           // using placeholder '?' to avoid SQL injection attacks
-          db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);', [answers.employeefirstname , answers.employeelastname , answers.employeerole, answers.employeemanagerid], function (err, results) {
+          db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id, department_id) VALUES (?, ?, ?, ?, ?);', [answers.employeefirstname , answers.employeelastname , answers.employeerole, answers.employeemanagerid, answers.employedepartmentid], function (err, results) {
             if (err) {
               // error handling\
               console.log('|--------------------Result----------------------|')
@@ -399,7 +404,7 @@ function viewEmployeesByManager () { // COMPLETE
       if (answers.viewEmpByManagerID.length === 0) {
 
             console.log('|--------------------Result----------------------|')
-            console.log('Please ensure you enter a valid employee ID');
+            console.log('Please ensure you enter a valid manager ID');
             console.log('|------------------------------------------------|')
 
       } else {
@@ -440,7 +445,7 @@ function viewEmployeesByDepartment () { // COMPLETE
       if (answers.viewEmpByDepartmentID.length === 0) {
 
             console.log('|--------------------Result----------------------|')
-            console.log('Please ensure you enter a valid employee ID');
+            console.log('Please ensure you enter a valid department ID');
             console.log('|------------------------------------------------|')
 
       } else {
@@ -472,9 +477,97 @@ function viewEmployeesByDepartment () { // COMPLETE
 
 // Delete selected data from selected tables function
 function deleteData () { // INCOMPLETE
+  inquirer
+  .prompt([
+    {
+      type: 'list',
+      message: 'Please select what you would like to delete from the database',
+      choices: ["Delete an employee", "Delete a department", "Delete a role"],
+      name: 'userDeleteQuery'
+    },
+    {
+      type:'input',
+      message: 'Please enter the ID of the department, role or employee you wish to delete',
+      name:'deleteID'
+    }
+  ])
+  .then((answers) => {
+
+    if (answers.userDeleteQuery.length === 0) {
+
+          console.log('|--------------------Result----------------------|')
+          console.log('Please ensure you enter a valid item from the list');
+          console.log('|------------------------------------------------|')
+          
+    } else { 
+
+     if (answers.userDeleteQuery == "Delete an employee") {
+
+      console.log(answers.deleteID)
+
+      db.query(`DELETE FROM employee WHERE id = ?;` , [answers.deleteID], function (err, results) {
+
+         if (err) {
+                console.log('|--------------------Result----------------------|')
+                console.error('An error occurred while deleting the employee:', err);
+                console.error(serverStatus)
+                console.log('|------------------------------------------------|')
+            return;
+      }
+
+      console.log('|--------------------Result----------------------|')
+      console.log(results)
+      console.log('|------------------------------------------------|')
+
+      initUserPrompts();
+    
+      })
+
+     } else {
+
+      if( answers.userDeleteQuery == "Delete a department") {
+
+      db.query(`DELETE FROM department WHERE id = ?;`, [answers.deleteID], function (err, results) {
+
+        if (err) {
+          console.log('|--------------------Result----------------------|')
+          console.error('An error occurred while deleting the department:', err);
+          console.log('|------------------------------------------------|')
+        return;
+        }
+
+        console.log('|--------------------Result----------------------|')
+        console.log(results)
+        console.log('|------------------------------------------------|')
+
+        initUserPrompts();
+      })
+
+     } else {
+
+      if( answers.userDeleteQuery == "Delete a role") {
 
 
-}
+        db.query(`DELETE FROM role WHERE id = ?;`, [answers.deleteID], function(err, results) {
+
+          if (err) {
+            console.log('|--------------------Result----------------------|')
+            console.error('An error occurred while deleting the role:', err);
+            console.log('|------------------------------------------------|')
+          return;
+
+          } 
+
+          console.log('|--------------------Result----------------------|')
+          console.log(results)
+          console.log('|------------------------------------------------|')
+    
+          initUserPrompts();
+      
+
+
+    })}}
+}}})}
 
 // Sum of utalized budget per department function
 function totalUtalizedBudget () { // INCOMPLETE
