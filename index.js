@@ -1,17 +1,20 @@
 // Import and require mysql2 & inquirer
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
+require('dotenv').config()
 
 
 // Connect to SQL database -- DONT FORGET TO ADD PASSWORD 
 const db = mysql.createConnection(
   {
-    host: 'localhost',
-    // MySQL username,
-    user: 'root',
+    // SQL Host
+    host: process.env.SQL_HOST,
+    // MySQL username
+    user: process.env.SQL_USERNAME,
     // MySQL password
-    password: '',
-    database: 'employee_db'
+    password: process.env.SQL_PASSWORD,
+    // MySQL Database
+    database: process.env.SQL_DATABASE
   },
   console.log(`Connected to the emplyoee_db database.`)
 );
