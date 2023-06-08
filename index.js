@@ -1,3 +1,8 @@
+//! TODO: Make screen recording
+
+
+
+
 // Import and require mysql2 & inquirer
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
@@ -87,9 +92,9 @@ inquirer
 // View all Departments function
 function viewAllDepartments () { // COMPLETE
  //select * from departments
- db.query('SELECT * FROM department \G', function (err, results) {
+ db.query('SELECT * FROM department ', function (err, results) {
     console.log('|--------------------Result----------------------|')
-    console.log(results)
+    console.table(results)
     console.log('|------------------------------------------------|')
     initUserPrompts()
 });
@@ -98,9 +103,13 @@ function viewAllDepartments () { // COMPLETE
 // View all Roles function
 function viewAllRoles () { // COMPLETE
 
-    db.query('SELECT * FROM role \G', function (err, results) {
+    db.query('SELECT role.id, role.title, role.salary, department.name AS department FROM role LEFT JOIN department ON role.department_id = department.id', function (err, results) {
+
+      if (err)
+      throw err
+
         console.log('|--------------------Result----------------------|')
-        console.log(results)
+        console.table(results)
         console.log('|------------------------------------------------|')
 
         initUserPrompts()
@@ -111,9 +120,13 @@ function viewAllRoles () { // COMPLETE
 // View all employees function
 function viewAllEmployees () { // COMPLETE
 // select * from employees
-db.query('SELECT * FROM employee \G', function (err, results) {
+db.query('SELECT employee.id, employee.first_name, employee.last_name, role.title AS role, role.salary AS salary, department.name AS department, CONCAT (manager.first_name," ", manager.last_name) AS manager  FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON employee.manager_id = manager.id', function (err, results) {
+
+  if(err)
+  throw err
+
     console.log('|--------------------Result----------------------|')
-    console.log(results)
+    console.table(results)
     console.log('|------------------------------------------------|')
 
     initUserPrompts()
@@ -242,11 +255,6 @@ function addAnEmployee () { // COMPLETE
         message: 'Please enter the employees manager ID (must be a number)',
         name: "employeemanagerid"
       },
-      {
-        type: "input",
-        message: 'Please enter the employees department ID (must be a number)',
-        name: "employedepartmentid"
-      },
   ])
 
   .then((answers) => {
@@ -273,7 +281,7 @@ function addAnEmployee () { // COMPLETE
     } else {
 // add all user input to create a new role
           // using placeholder '?' to avoid SQL injection attacks
-          db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id, department_id) VALUES (?, ?, ?, ?, ?);', [answers.employeefirstname , answers.employeelastname , answers.employeerole, answers.employeemanagerid, answers.employedepartmentid], function (err, results) {
+          db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);', [answers.employeefirstname , answers.employeelastname , answers.employeerole, answers.employeemanagerid], function (err, results) {
             if (err) {
               // error handling\
               console.log('|--------------------Result----------------------|')
@@ -317,13 +325,13 @@ function updateEmployeeRole() { // COMPLETE
       ])
       .then((answers) => {
         if (answers.updateemployeeid.length === 0) {
-            console.log('|--------------------Result----------------------|')
+          console.log('|--------------------Result----------------------|')
           console.log('Please ensure you enter a valid employee ID');
           console.log('|------------------------------------------------|')
 
         } else {
           let updateSelectedEmployee = answers.updateemployeeid;
-          let updateField = '`' + answers.updateemployeefield + '`'; // Enclose field name within backticks
+          let updateField = '`' + answers.updateemployeefield + '`'; 
           let updateContent = answers.updatecontent;
   
           let sql = 'UPDATE employee SET ' + updateField + ' = ? WHERE id = ?';
@@ -331,13 +339,13 @@ function updateEmployeeRole() { // COMPLETE
   
           db.query(sql, values, function (err, results) {
             if (err) {
-                console.log('|--------------------Result----------------------|')
+              console.log('|--------------------Result----------------------|')
               console.error('An error occurred while updating the employee:', err);
               console.log('|------------------------------------------------|')
               return;
             }
             console.log('|--------------------Result----------------------|')
-            console.log(results);
+            console.table(results);
             console.log(`The records for employee ${updateSelectedEmployee} have been updated in the database`);
             console.log('|------------------------------------------------|')
             initUserPrompts();
@@ -423,7 +431,7 @@ function viewEmployeesByManager () { // COMPLETE
             return;
           }
             console.log('|--------------------Result----------------------|')
-            console.log(results)
+            console.table(results)
             console.log('|------------------------------------------------|')
 
           initUserPrompts();
@@ -433,6 +441,7 @@ function viewEmployeesByManager () { // COMPLETE
 
 
 }
+
 
 // view all employees by department
 function viewEmployeesByDepartment () { // COMPLETE
@@ -456,8 +465,7 @@ function viewEmployeesByDepartment () { // COMPLETE
         let sql = 
         `SELECT employee.id, employee.first_name, employee.last_name, department.name AS department
         FROM employee
-        JOIN department ON employee.department_id = department.id
-        WHERE department.id = ?`;
+         WHERE department.id = ?`;
         
         let departmentID = answers.viewEmpByDepartmentID
         db.query(sql, departmentID, function (err, results) {
@@ -574,8 +582,49 @@ function deleteData () { // INCOMPLETE
 
 // Sum of utalized budget per department function
 function totalUtalizedBudget () { // INCOMPLETE
+  inquirer
+  .prompt([
+    {
+      type: 'input',
+      message: 'Please enter a department ID to view total utalized budget',
+      name: 'departmenttotalbudget'
+    },
+  ])
+  .then((answers) => {
+    if (answers.departmenttotalbudget.length === 0) {
 
+          console.log('|--------------------Result----------------------|')
+          console.log('Please ensure you enter a valid department ID');
+          console.log('|------------------------------------------------|')
+
+    } else {
+      
+      let sql = 
+      `SELECT employee.id, employee.first_name, employee.last_name, department.name AS department
+      FROM employee
+      JOIN department ON employee.department_id = department.id
+      WHERE department.id = ?`;
+      
+      let departmentID = answers.viewEmpByDepartmentID
+      db.query(sql, departmentID, function (err, results) {
+        if (err) {
+              console.log('|--------------------Result----------------------|')
+              console.error('An error occurred while updating the employee:', err);
+              console.log('|------------------------------------------------|')
+          return;
+        }
+          console.log('|--------------------Result----------------------|')
+          console.log(results)
+          console.log('|------------------------------------------------|')
+
+        initUserPrompts();
+      });
+    }
+  });
+ 
 }
+
+// '(SELECT SUM(salary) FROM role WHERE role.department_id = department_id AS Total_Utalized_Budget)'
 
 // Init the application when node index.js is prompted.
 initUserPrompts();

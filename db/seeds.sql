@@ -22,15 +22,15 @@ VALUES
     ("Chief Executive Officer", 100000, 2);
 
 
-INSERT INTO employee (first_name, last_name, role_id, manager_id, department_id)
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
-    ("Fergus", "Illman", 8, 1, 1),
-    ("James", "Alexandrou", 3, 1, 2),
-    ("Michael", "Moschakis", 2, 1, 3),
-    ("Oliver", "Gahan", 4, 1, 4),
-    ("John", "Gander", 3, 1, 5),
-    ("Harry", "Potter", 5, 1, 6),
-    ("Ronald", "Weasly", 6, 1, 7),
-    ("Joshua", "Ryals", 7, 1, 3);
+    ("Fergus", "Illman", 8, 1),
+    ("James", "Alexandrou", 3, 1),
+    ("Michael", "Moschakis", 2, 1),
+    ("Oliver", "Gahan", 4, 1),
+    ("John", "Gander", 3, 1),
+    ("Harry", "Potter", 5, 1),
+    ("Ronald", "Weasly", 6, 1),
+    ("Joshua", "Ryals", 7, 1);
     
     
